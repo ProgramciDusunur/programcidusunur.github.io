@@ -483,103 +483,12 @@ body {
 
 @import url('https://fonts.googleapis.com/css?family=Fira+Mono:400');
 
-.glitch-text {
-  animation: glitch 1s linear infinite;
-  font-family: 'Fira Mono', monospace;
-  position: relative;
-  justify-content: center;
-  
-}
-
-/* Center The Glitch Text */
-
-.glitch-text-center {	
-	animation: glitch 1s linear infinite;
-  font-family: 'Fira Mono', monospace;
+.glitch-text-rework {
+   font-family: 'Fira Mono', monospace;
   position: relative;
   justify-content: center;
   display: flex;
   font-size: calc(1.0vw + 0.75vh);
-}
-
-@keyframes glitch{
-  2%,64%{
-    transform: translate(2px,0) skew(0deg);
-  }
-  4%,60%{
-    transform: translate(-2px,0) skew(0deg);
-  }
-  62%{
-    transform: translate(0,0) skew(5deg); 
-  }
-}
-
-.glitch-text:before,
-.glitch-text:after{
-  content: attr(title);
-  position: absolute;  
-  left: 0;
-}
-
-/* Center The Glitch Text */
-
-.glitch-text-center:before,
-.glitch-text-center:after{
-  content: attr(title);
-  position: absolute;
-  display: flex;    
-}
-
-.glitch-text:before{
-  animation: glitchTop 1s linear infinite;
-  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-}
-
-/* Center The Glitch Text */
-
-.glitch-text-center:before{
-  animation: glitchTop 1s linear infinite;
-  clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-  -webkit-clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
-}
-
-@keyframes glitchTop{
-  2%,64%{
-    transform: translate(2px,-2px);
-  }
-  4%,60%{
-    transform: translate(-2px,2px);
-  }
-  62%{
-    transform: translate(13px,-1px) skew(-13deg); 
-  }
-}
-
-.glitch-text:after{
-  animation: glitchBottom 1.5s linear infinite;
-  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-  -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-}
-
-/* Center The Glitch Text */
-
-.glitch-text-center:after{
-  animation: glitchBottom 1.5s linear infinite;
-  clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-  -webkit-clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
-}
-
-@keyframes glitchBottom{
-  2%,64%{
-    transform: translate(-2px,0);
-  }
-  4%,60%{
-    transform: translate(-2px,0);
-  }
-  62%{
-    transform: translate(-22px,5px) skew(21deg); 
-  }
 }
 /**********************************\
  ==================================
