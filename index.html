@@ -1,219 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="Eren Araz's portfolio website showcasing his projects, skills, and certifications.">
-	<meta name="keywords" content="Eren Araz, portfolio, projects, skills, certifications, developer, eren araz">
-	<meta name="author" content="Eren Araz">
-
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Audiowide|Sofia|Handjet|">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Josefin+Slab:wght@500&display=swap" rel="stylesheet">	
-	<title>Eren Araz</title>
-	<link rel="stylesheet" type="text/css" href="design.css">
-	<script type="text/javascript" src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tailwind CSS Example</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/d5093398ed.js" crossorigin="anonymous"></script>
 </head>
-<body>	
-	<header>
-		<nav>
-			<div class="menu">				
-				<div class="menu-boss">Eren Araz</div>
-				<div class="menu-button" onclick=""><a href="">Home</a></div>
-				<div class="menu-button"><a href="">About</a></div>
-				<div class="menu-button"><a href="">Contact</a></div>
-			</div>				
-		</nav>	
-	</header>
-	<div class="icerikBlok icerikBlok-Grid">
-		<div class="homeContent">
-			<div class="homeContent-Text">
-				<!--<h1>Welcome</h1>-->
-				<h1><div class="glitch-text" title="Welcome">Welcome</div></h1>
-				Hi, i am a <b>full-stack developer</b> and i am currently working on<b> a lot projects</b>.
-			</div>
+<body class="bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 min-h-screen flex flex-col">
+	<header class="bg-gray-900 py-4 px-4 md:px-8 flex justify-between items-center">
+		<div class="text-white font-bold text-2xl">Eren Araz</div>
+		<nav class="flex space-x-4 md:space-x-6 text-gray-300">
+		  <a href="#" class="hover:text-white transition-colors">
+			Home
+		  </a>
+		  <a href="#" class="hover:text-white transition-colors">
+			About
+		  </a>
+		  <a href="#" class="hover:text-white transition-colors">
+			Contact
+		  </a>
+		</nav>
+	  </header>
+	  <main class="flex-1 flex items-center justify-center py-8 md:py-16">
+		<div class="max-w-4xl mx-auto text-center px-4">
+		  <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Welcome</h1>
+		  <p class="text-gray-200 text-base md:text-lg mb-6">
+			Hi, I am a full-stack developer and I am currently working on a lot of projects.
+		  </p>
 		</div>
-	</div>
-	<div class="icerikBlok icerikBlok-Grid">
-			<div class="projectCard">
-				<div class="projectCard-Header">					
-					<div class="projectCard-Header-Text">					
-						<div class="projectCard-Header-Text-Child">Java Chess Engine</div>						
-					</div>
-				</div>
-				<!--<div class="projectCard-Content"></div>-->
-				<div class="projectCard-Test">
-					<div class="projectCard-Test-TextTransform">Github</div>				
-				</div>
-
-			</div>
-			<div class="projectCard">				
-				<div class="projectCard-Header">
-					<div class="projectCard-Header-Text">
-						<div class="projectCard-Header-Text-Child">TicTacToe AI</div>						
-					</div>
-				</div>
-
-				<div class="projectCard-Test">
-
-					<div class="projectCard-Test-TextTransform">Github</div>
-					
-				</div>
-
-			</div>
-			<div class="projectCard">
-				<div class="projectCard-Header">
-					<div class="projectCard-Header-Text">
-						<div class="projectCard-Header-Text-Child">Potential</div>						
-					</div>
-					
-				</div>
-
-				<div class="projectCard-Test">
-					<div class="projectCard-Test-TextTransform">Github</div>
-				</div>
-
-			</div>
-			<!--<div class="projectCard">
-				<div class="projectCard-Header">
-					<div class="projectCard-Github"> </div>						
-					<h2>Java Chess Engine</h2>
-					<div class="projectCard-Star"><span class="star-icon full"> <span id="javaChessEngine">☆</span> </span></div>
-				</div>				
-				<div class="projectCard-Text">
-					What is Lorem Ipsum?
-					Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-				</div>								
-				<div class="readMore" onclick="window.open('javaChessEngine.html', '_blank');"><span>Read More</span></div>
-			</div>
-			<div class="projectCard">
-				<div class="projectCard-Header">
-					<div class="projectCard-Github"> </div>						
-					<h2>TicTacToe AI</h2>
-					<div class="projectCard-Star"><span class="star-icon full"> <span id="ticTacToeAI">☆</span> </span></div>
-				</div>
-				
-				<div class="projectCard-Text">
-					What is Lorem Ipsum?
-					Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-				</div>
-				
-				<div class="readMore"><span>Read More</span></div>
-
-			</div>
-			<div class="projectCard">
-				<div class="projectCard-Header">
-					<div class="projectCard-Github"> </div>						
-					<h2>Potential</h2>
-					<div class="projectCard-Star"><span class="star-icon full"> <span id="cChessEngine">☆</span> </span></div>
-				</div>				
-				<div class="projectCard-Text">
-					What is Lorem Ipsum?
-					Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-				</div>				
-				<div class="readMore"><span>Read More</span></div>
-			</div>-->
-
+	  </main>
+	  <section class="bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 py-8 md:py-16">
+		<div class="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 px-4">
+		  <div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			<div class="bg-yellow-500 text-white font-bold px-4 py-2 rounded-full mb-4 flex items-center justify-center">				
+				<i class="fa-solid fa-warehouse" style="font-size: 25px"></i>
+			  </div>
+			<h3 class="text-gray-800 font-bold text-2xl mb-2">Warehouse</h3>
+			<p class="text-gray-600 italic text-base md:text-lg">
+			  Powerful and efficient engine for your applications.
+			</p>
+		  </div>
+		  <div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			<div class="bg-yellow-500 text-white font-bold px-4 py-2 rounded-full mb-4 flex items-center justify-center">								
+				<i class="fa-solid fa-x" style="font-size: 25px"></i>
+			  </div>
+			<h3 class="text-gray-800 font-bold text-2xl mb-2">Tic-Tac-Toe AI</h3>
+			<p class="text-gray-600 italic text-base md:text-lg">
+			  Advanced AI technology for intelligent decision-making.
+			</p>
+		  </div>
+		  <div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			<div class="bg-yellow-500 text-white font-bold px-4 py-2 rounded-full mb-4 flex items-center justify-center">
+				<i class="fa-solid fa-chess-knight" style="font-size: 25px"></i>
+			  </div>
+			  
+			<h3 class="text-gray-800 font-bold text-2xl mb-2">Potential</h3>
+			<p class="text-gray-600 italic text-base md:text-lg">
+			  Strong, Universal Chess Interface supported chess engine.
+			</p>
+		  </div>
 		</div>
-		<div class="icerikBlok icerikBlok-Grid">
-			<div class="homeContent2">
-				<div class="homeContent-Text2">
-					<h1><div class="glitch-text-rework" title="Skills">Skills</div></h1>
-					<div class="skillCard-Container">
-						<div class="skillCard">
-							<div class="skillCard-HTML5"></div>							
-							<div class="skillCard-HTML5-Text"></div>							
-						</div>
-						<div class="skillCard">
-							<div class="skillCard-CSS3"></div>
-							<div class="skillCard-CSS3-Text"></div>							
-						</div>
-						<div class="skillCard">
-							<div class="skillCard-JAVASCRIPT"></div>
-							<div class="skillCard-JAVASCRIPT-Text"></div>							
-						</div>
-						<div class="skillCard">
-							<div class="skillCard-REACT"></div>
-							<div class="skillCard-REACT-Text">React</div>							
-						</div>						
-					</div>
-					
-				</div>
+	  </section>
+	  <section class="bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 py-8 md:py-16">
+		<div class="max-w-3xl mx-auto px-4">
+		  <h2 class="text-2xl md:text-3xl font-bold text-white mb-6">Skills</h2>
+		  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="h-8 md:h-10 w-8 md:w-10 text-blue-500 mb-4"
+			  >
+				<polyline points="16 18 22 12 16 6"></polyline>
+				<polyline points="8 6 2 12 8 18"></polyline>
+			  </svg>
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Coding</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Proficient in various programming languages.</p>
 			</div>
-		</div>
-		<div class="icerikBlok icerikBlok-Grid">
-			<div class="homeContent2">
-				<div class="homeContent-Text2">
-					<h1><div class="glitch-text-rework" title="Certificate">Certificate</div></h1>
-					<div class="certificate-Container">
-						<div class="freeCodeCamp-FirstFrame">
-							<div class="freeCodeCamp-SecondFrame">
-								<div class="freeCodeCamp-SecondFrame-HeaderContainer">
-									<div class="freeCodeCamp-Logo"></div>
-									<div class="freeCodeCamp-Information">
-										<h3>This certifies that</h3>
-										<h1>Eren Araz</h1>
-										<h3>successfully completed the</h3>
-										<h1>Responsive Web Design</h1>
-										<h4>Developer Certification on September 27, 2023</h4>
-										<h5>representing approximately 300 hours of work</h5>			
-										<div class="freeCodeCamp-Footer">
-											<div class="responsiveDesignQR"></div>	
-											<div class="freeCodeCamp-Signature">
-												<p>  Quincy Larson </p>
-												<p>Executive Director, freeCodeCamp.org</p>
-												<p>Verify this certification at:</p>
-												<p>https://www.freecodecamp.org/certification/programcidusunur/responsive-web-design</p>
-											</div>
-											<div class="freeCodeCamp-Ribbon"></div>
-										</div>
-									</div>
-								</div>																
-
-							</div>
-						</div>
-					</div>
-					<div class="certificate-Container">
-						<div class="freeCodeCamp-FirstFrame">
-							<div class="freeCodeCamp-SecondFrame">
-								<div class="freeCodeCamp-SecondFrame-HeaderContainer">
-									<div class="freeCodeCamp-Logo"></div>
-									<div class="freeCodeCamp-Information">
-										<h3>This certifies that</h3>
-										<h1>Eren Araz</h1>
-										<h3>successfully completed the</h3>
-										<h1>Javascript Algorithms and Data Structures</h1>
-										<h4>Developer Certification on October 24, 2023</h4>
-										<h5>representing approximately 300 hours of work</h5>			
-										<div class="freeCodeCamp-Footer">
-											<div class="javascriptAlgorithmsQR"></div>	
-											<div class="freeCodeCamp-Signature">
-												<p>  Quincy Larson </p>
-												<p>Executive Director, freeCodeCamp.org</p>
-												<p>Verify this certification at:</p>
-												<p>https://www.freecodecamp.org/certification/ProgramciDusunur/javascript-algorithms-and-data-structures</p>
-											</div>
-											<div class="freeCodeCamp-Ribbon"></div>
-										</div>
-									</div>
-								</div>																
-
-							</div>
-						</div>
-					</div>
-				</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="h-8 md:h-10 w-8 md:w-10 text-green-500 mb-4"
+			  >
+				<ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+				<path d="M3 5V19A9 3 0 0 0 21 19V5"></path>
+				<path d="M3 12A9 3 0 0 0 21 12"></path>
+			  </svg>
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Database</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Experienced in database design and management.</p>
 			</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="h-8 md:h-10 w-8 md:w-10 text-yellow-500 mb-4"
+			  >
+				<path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+			  </svg>
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Cloud</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">
+				Expertise in cloud-based solutions and deployment.
+			  </p>
+			</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <svg
+				xmlns="http://www.w3.org/2000/svg"
+				width="24"
+				height="24"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="h-8 md:h-10 w-8 md:w-10 text-purple-500 mb-4"
+			  >
+				<rect width="14" height="20" x="5" y="2" rx="2" ry="2"></rect>
+				<path d="M12 18h.01"></path>
+			  </svg>
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Mobile</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Proficient in mobile app development.</p>
+			</div>
+		  </div>
 		</div>
-	<footer>
-		<div class="footer">
-			<div class="footer-component-container">				
-				<div class="footer-component" onclick="showDiscordAddress()">Discord</div>
-				<div class="footer-component">About</div>
-				<div class="footer-component">Contact</div>
-				<div class="footer-component"><a href="https://github.com/ProgramciDusunur">Github</a></div>	
-			</div>									
+	  </section>
+	  <section class="bg-gradient-to-r from-blue-500 via-green-500 to-yellow-500 py-8 md:py-16">
+		<div class="max-w-3xl mx-auto px-4">
+		  <h2 class="text-2xl md:text-3xl font-bold text-white mb-6">Certificates</h2>
+		  <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <img
+				src="/placeholder.svg"
+				width="80"
+				height="80"
+				alt="Responsive Web Design Certificate"
+				class="mb-4"
+				style="aspect-ratio: 80 / 80; object-fit: cover;"
+			  />
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Responsive Web Design</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Earned on freeCodeCamp</p>
+			</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <img
+				src="/placeholder.svg"
+				width="80"
+				height="80"
+				alt="JavaScript Algorithms and Data Structures Certificate"
+				class="mb-4"
+				style="aspect-ratio: 80 / 80; object-fit: cover;"
+			  />
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">JavaScript Algorithms</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Earned on freeCodeCamp</p>
+			</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <img
+				src="/placeholder.svg"
+				width="80"
+				height="80"
+				alt="Front End Libraries Certificate"
+				class="mb-4"
+				style="aspect-ratio: 80 / 80; object-fit: cover;"
+			  />
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Front End Libraries</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Earned on freeCodeCamp</p>
+			</div>
+			<div class="bg-white rounded-lg p-6 flex flex-col items-center shadow-lg hover:shadow-2xl transition-shadow duration-300">
+			  <img
+				src="/placeholder.svg"
+				width="80"
+				height="80"
+				alt="Data Visualization Certificate"
+				class="mb-4"
+				style="aspect-ratio: 80 / 80; object-fit: cover;"
+			  />
+			  <h3 class="text-gray-800 font-bold text-2xl mb-2">Data Visualization</h3>
+			  <p class="text-gray-600 italic text-base md:text-lg">Earned on freeCodeCamp</p>
+			</div>
+		  </div>
 		</div>
-	</footer>
+	  </section>
 </body>
 </html>
