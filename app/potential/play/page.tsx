@@ -9,21 +9,39 @@ import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, RotateCcw, Play, SkipForward, Settings, Clock, Award, Copy, Save } from "lucide-react"
+import { ArrowLeft, RotateCcw, Play, SkipForward, Clock, Award, Copy, Save, Volume2, VolumeX } from "lucide-react"
 import { ChessIcon } from "@/components/chess-icon"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Chess } from "chess.js"
 import { Chessboard } from "react-chessboard"
+import { useChessAudio } from "@/hooks/use-chess-audio"
 
 export default function PlayPage() {
   // Chess game state
   const [game, setGame] = useState(new Chess())
   const [boardOrientation, setBoardOrientation] = useState("white")
   const [selectedMoveIndex, setSelectedMoveIndex] = useState(-1)
+  const [gameStatus, setGameStatus] = useState<"playing" | "check" | "checkmate" | "stalemate" | "draw">("playing")
+
+  // Audio settings
+  const [audioEnabled, setAudioEnabled] = useState(true)
+  const [audioVolume, setAudioVolume] = useState([0.5])
+
+  // Initialize chess audio
+  const chessAudio = useChessAudio({
+    enabled: audioEnabled,
+    volume: audioVolume[0],
+  })
 
   // Mobile UI state
   const [activeTab, setActiveTab] = useState("moves")
+
+  // Timer state
+  const [whiteTime, setWhiteTime] = useState(300) // 5 minutes in seconds
+  const [blackTime, setBlackTime] = useState(300)
+  const [isTimerRunning, setIsTimerRunning] = useState(false)
+  const [currentPlayer, setCurrentPlayer] = useState<"white" | "black">("white")
 
   // Principal variation state (for engine's best line)
   const [pvGame, setPvGame] = useState(new Chess())
@@ -69,6 +87,47 @@ export default function PlayPage() {
   // Get move history directly from game
   const moveHistory = game.history({ verbose: true })
 
+  // Timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+
+    if (isTimerRunning && gameStatus === "playing") {
+      interval = setInterval(() => {
+        if (currentPlayer === "white") {
+          setWhiteTime((prev) => {
+            if (prev <= 1) {
+              setGameStatus("checkmate")
+              chessAudio.playGameEnd()
+              setIsTimerRunning(false)
+              return 0
+            }
+            // Play tick sound every second
+            if (prev <= 10) {
+              chessAudio.playTick()
+            }
+            return prev - 1
+          })
+        } else {
+          setBlackTime((prev) => {
+            if (prev <= 1) {
+              setGameStatus("checkmate")
+              chessAudio.playGameEnd()
+              setIsTimerRunning(false)
+              return 0
+            }
+            // Play tick sound every second when time is low
+            if (prev <= 10) {
+              chessAudio.playTick()
+            }
+            return prev - 1
+          })
+        }
+      }, 1000)
+    }
+
+    return () => clearInterval(interval)
+  }, [isTimerRunning, currentPlayer, gameStatus, chessAudio])
+
   // Update PV board when principal variation changes
   useEffect(() => {
     if (principalVariation.length > 0) {
@@ -84,17 +143,61 @@ export default function PlayPage() {
     }
   }, [principalVariation, game])
 
+  // Check game status and play appropriate sounds
+  useEffect(() => {
+    if (game.isCheckmate()) {
+      setGameStatus("checkmate")
+      chessAudio.playCheckmate()
+      setIsTimerRunning(false)
+    } else if (game.isCheck()) {
+      setGameStatus("check")
+      chessAudio.playCheck()
+    } else if (game.isStalemate() || game.isDraw()) {
+      setGameStatus(game.isStalemate() ? "stalemate" : "draw")
+      chessAudio.playGameEnd()
+      setIsTimerRunning(false)
+    } else {
+      setGameStatus("playing")
+    }
+  }, [game, chessAudio])
+
   // Function to make a move
   function makeAMove(move) {
     const gameCopy = new Chess(game.fen())
     try {
       const result = gameCopy.move(move)
       if (result) {
+        // Determine move type and play appropriate sound
+        if (result.flags.includes("k") || result.flags.includes("q")) {
+          // Castling
+          chessAudio.playCastling()
+        } else if (result.flags.includes("p")) {
+          // Promotion
+          chessAudio.playPromotion()
+        } else if (result.flags.includes("c") || result.flags.includes("e")) {
+          // Capture
+          chessAudio.playCapture()
+        } else {
+          // Regular move
+          chessAudio.playMove()
+        }
+
         setGame(gameCopy)
         setSelectedMoveIndex(-1)
+
+        // Switch current player and continue timer
+        setCurrentPlayer((prev) => (prev === "white" ? "black" : "white"))
+
+        // Start timer if it's the first move
+        if (moveHistory.length === 0) {
+          setIsTimerRunning(true)
+        }
+
         return true
       }
     } catch (e) {
+      // Play illegal move sound
+      chessAudio.playIllegalMove()
       return false
     }
     return false
@@ -114,16 +217,24 @@ export default function PlayPage() {
   function resetGame() {
     setGame(new Chess())
     setSelectedMoveIndex(-1)
+    setGameStatus("playing")
+    setWhiteTime(300)
+    setBlackTime(300)
+    setIsTimerRunning(false)
+    setCurrentPlayer("white")
+    chessAudio.playGameStart()
   }
 
   // Function to flip the board
   function flipBoard() {
     setBoardOrientation(boardOrientation === "white" ? "black" : "white")
+    chessAudio.playMove()
   }
 
   // Function to handle move click
   function handleMoveClick(index) {
     setSelectedMoveIndex(index)
+    chessAudio.playMove()
   }
 
   // Function to get position for display
@@ -165,10 +276,19 @@ export default function PlayPage() {
       .writeText(pgn)
       .then(() => {
         alert("PGN copied to clipboard")
+        chessAudio.playMove()
       })
       .catch((err) => {
         console.error("Failed to copy PGN: ", err)
+        chessAudio.playIllegalMove()
       })
+  }
+
+  // Function to format time
+  function formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60)
+    const secs = seconds % 60
+    return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
   // Mock function to get principal variation
@@ -184,6 +304,11 @@ export default function PlayPage() {
   // Function to update principal variation
   function updatePrincipalVariation() {
     setPrincipalVariation(getMockPrincipalVariation())
+  }
+
+  // Function to start new game
+  function startNewGame() {
+    resetGame()
   }
 
   // Simulate engine analysis every few seconds
@@ -223,6 +348,26 @@ export default function PlayPage() {
             strongest open-source chess engines or analyze your games.
           </p>
 
+          {/* Game status indicator */}
+          {gameStatus !== "playing" && (
+            <div className="mb-4 text-center">
+              <div
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium ${
+                  gameStatus === "checkmate"
+                    ? "bg-red-900/20 text-red-400 border border-red-800"
+                    : gameStatus === "check"
+                      ? "bg-yellow-900/20 text-yellow-400 border border-yellow-800"
+                      : "bg-blue-900/20 text-blue-400 border border-blue-800"
+                }`}
+              >
+                {gameStatus === "checkmate" && "♔ Checkmate!"}
+                {gameStatus === "check" && "⚠ Check!"}
+                {gameStatus === "stalemate" && "🤝 Stalemate"}
+                {gameStatus === "draw" && "🤝 Draw"}
+              </div>
+            </div>
+          )}
+
           {/* Mobile layout - shows on screens smaller than lg */}
           <div className="lg:hidden space-y-4">
             {/* Main chess board - mobile */}
@@ -251,6 +396,7 @@ export default function PlayPage() {
                         const gameCopy = new Chess(game.fen())
                         gameCopy.undo()
                         setGame(gameCopy)
+                        chessAudio.playMove()
                       }}
                       title="Undo Move"
                     >
@@ -268,10 +414,15 @@ export default function PlayPage() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-7 w-7 sm:h-8 sm:w-8 text-[#8b949e]"
-                      title="Settings"
+                      className={`h-7 w-7 sm:h-8 sm:w-8 ${audioEnabled ? "text-[#58a6ff]" : "text-[#8b949e]"}`}
+                      onClick={() => setAudioEnabled(!audioEnabled)}
+                      title={audioEnabled ? "Disable Audio" : "Enable Audio"}
                     >
-                      <Settings className="h-3 w-3 sm:h-4 sm:w-4" />
+                      {audioEnabled ? (
+                        <Volume2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                      ) : (
+                        <VolumeX className="h-3 w-3 sm:h-4 sm:w-4" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -296,13 +447,17 @@ export default function PlayPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between text-xs text-[#8b949e] px-3 sm:px-6">
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div
+                  className={`flex items-center gap-1 sm:gap-2 ${currentPlayer === "white" && isTimerRunning ? "text-[#58a6ff]" : ""}`}
+                >
                   <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>White: 5:00</span>
+                  <span>White: {formatTime(whiteTime)}</span>
                 </div>
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div
+                  className={`flex items-center gap-1 sm:gap-2 ${currentPlayer === "black" && isTimerRunning ? "text-[#58a6ff]" : ""}`}
+                >
                   <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>Black: 5:00</span>
+                  <span>Black: {formatTime(blackTime)}</span>
                 </div>
               </CardFooter>
             </Card>
@@ -585,11 +740,30 @@ export default function PlayPage() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="hints" className="text-[#e6edf3] text-sm">
-                          Show Hints
+                        <Label htmlFor="audio-enabled" className="text-[#e6edf3] text-sm">
+                          Sound Effects
                         </Label>
-                        <Switch id="hints" />
+                        <Switch id="audio-enabled" checked={audioEnabled} onCheckedChange={setAudioEnabled} />
                       </div>
+
+                      {audioEnabled && (
+                        <div>
+                          <Label htmlFor="audio-volume" className="text-[#e6edf3] mb-2 block text-sm">
+                            Volume
+                          </Label>
+                          <Slider
+                            value={audioVolume}
+                            onValueChange={setAudioVolume}
+                            max={1}
+                            step={0.1}
+                            className="my-4"
+                          />
+                          <div className="text-xs text-[#8b949e] flex justify-between">
+                            <span>Quiet</span>
+                            <span>Loud</span>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between">
                         <Label htmlFor="analysis" className="text-[#e6edf3] text-sm">
@@ -598,7 +772,10 @@ export default function PlayPage() {
                         <Switch id="analysis" />
                       </div>
 
-                      <Button className="w-full gap-2 bg-[#238636] text-white hover:bg-[#2ea043] mt-4 h-9">
+                      <Button
+                        className="w-full gap-2 bg-[#238636] text-white hover:bg-[#2ea043] mt-4 h-9"
+                        onClick={startNewGame}
+                      >
                         <Play className="h-4 w-4" />
                         Start New Game
                       </Button>
@@ -638,6 +815,7 @@ export default function PlayPage() {
                           const gameCopy = new Chess(game.fen())
                           gameCopy.undo()
                           setGame(gameCopy)
+                          chessAudio.playMove()
                         }}
                         title="Undo Move"
                       >
@@ -652,8 +830,14 @@ export default function PlayPage() {
                       >
                         <Play className="h-4 w-4 transform rotate-90" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-[#8b949e]" title="Settings">
-                        <Settings className="h-4 w-4" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`h-8 w-8 ${audioEnabled ? "text-[#58a6ff]" : "text-[#8b949e]"}`}
+                        onClick={() => setAudioEnabled(!audioEnabled)}
+                        title={audioEnabled ? "Disable Audio" : "Enable Audio"}
+                      >
+                        {audioEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                       </Button>
                     </div>
                   </div>
@@ -675,13 +859,17 @@ export default function PlayPage() {
                   </div>
                 </CardContent>
                 <CardFooter className="flex justify-between text-xs text-[#8b949e]">
-                  <div className="flex items-center gap-2">
+                  <div
+                    className={`flex items-center gap-2 ${currentPlayer === "white" && isTimerRunning ? "text-[#58a6ff]" : ""}`}
+                  >
                     <Clock className="h-4 w-4" />
-                    <span>White: 5:00</span>
+                    <span>White: {formatTime(whiteTime)}</span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div
+                    className={`flex items-center gap-2 ${currentPlayer === "black" && isTimerRunning ? "text-[#58a6ff]" : ""}`}
+                  >
                     <Clock className="h-4 w-4" />
-                    <span>Black: 5:00</span>
+                    <span>Black: {formatTime(blackTime)}</span>
                   </div>
                 </CardFooter>
               </Card>
@@ -958,11 +1146,30 @@ export default function PlayPage() {
                       </div>
 
                       <div className="flex items-center justify-between">
-                        <Label htmlFor="hints" className="text-[#e6edf3]">
-                          Show Hints
+                        <Label htmlFor="audio-enabled-desktop" className="text-[#e6edf3]">
+                          Sound Effects
                         </Label>
-                        <Switch id="hints" />
+                        <Switch id="audio-enabled-desktop" checked={audioEnabled} onCheckedChange={setAudioEnabled} />
                       </div>
+
+                      {audioEnabled && (
+                        <div>
+                          <Label htmlFor="audio-volume-desktop" className="text-[#e6edf3] mb-2 block">
+                            Volume
+                          </Label>
+                          <Slider
+                            value={audioVolume}
+                            onValueChange={setAudioVolume}
+                            max={1}
+                            step={0.1}
+                            className="my-4"
+                          />
+                          <div className="text-xs text-[#8b949e] flex justify-between">
+                            <span>Quiet</span>
+                            <span>Loud</span>
+                          </div>
+                        </div>
+                      )}
 
                       <div className="flex items-center justify-between">
                         <Label htmlFor="analysis" className="text-[#e6edf3]">
@@ -971,7 +1178,10 @@ export default function PlayPage() {
                         <Switch id="analysis" />
                       </div>
 
-                      <Button className="w-full gap-2 bg-[#238636] text-white hover:bg-[#2ea043] mt-4">
+                      <Button
+                        className="w-full gap-2 bg-[#238636] text-white hover:bg-[#2ea043] mt-4"
+                        onClick={startNewGame}
+                      >
                         <Play className="h-4 w-4" />
                         Start New Game
                       </Button>
@@ -1001,13 +1211,13 @@ export default function PlayPage() {
 
             <Card className="border-[#30363d] bg-[#0d1117] shadow-md">
               <CardHeader className="px-3 sm:px-6">
-                <CardTitle className="text-sm sm:text-base md:text-lg text-[#e6edf3]">Performance</CardTitle>
+                <CardTitle className="text-sm sm:text-base md:text-lg text-[#e6edf3]">Performance & Audio</CardTitle>
               </CardHeader>
               <CardContent className="px-3 sm:px-6">
                 <p className="text-xs sm:text-sm text-[#8b949e] mb-4">
                   The WebAssembly version of Potential is approximately 80-90% as strong as the native version, with an
-                  estimated rating of 2800+ ELO at maximum strength. Performance may vary based on your device and
-                  browser.
+                  estimated rating of 2800+ ELO at maximum strength. Enhanced with immersive audio feedback for moves,
+                  captures, and game events.
                 </p>
                 <div className="flex items-center gap-4 text-xs text-[#8b949e]">
                   <div className="flex items-center gap-1">
@@ -1015,8 +1225,8 @@ export default function PlayPage() {
                     <span>2800+ ELO</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-[#58a6ff]" />
-                    <span>Fast Analysis</span>
+                    <Volume2 className="h-3 w-3 sm:h-4 sm:w-4 text-[#58a6ff]" />
+                    <span>Audio Feedback</span>
                   </div>
                 </div>
               </CardContent>
