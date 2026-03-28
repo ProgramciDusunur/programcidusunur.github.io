@@ -2,7 +2,7 @@
 // Service Worker — erenaraz.com (v4)
 // FIXED: Response consumption race condition
 // =============================================================================
-const CACHE_NAME = 'potential-site-v4';
+const CACHE_NAME = 'potential-site-v5';
 
 const PRECACHE_URLS = [
     './',
@@ -74,7 +74,8 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // Tier 2: Same-origin static assets - Stale While Revalidate
+    // Tier 2: Same-origin static assets - Stale While Revalidate + COOP/COEP
+    // Required: Workers must also have COEP headers to run in isolated pages
     if (url.origin === self.location.origin) {
         event.respondWith(
             caches.match(event.request).then(cached => {
@@ -83,10 +84,10 @@ self.addEventListener('fetch', (event) => {
                         const cacheCopy = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(event.request, cacheCopy));
                     }
-                    return response;
+                    return withCoiHeaders(response);
                 }).catch(() => null);
 
-                return cached || networkFetch;
+                return withCoiHeaders(cached) || networkFetch;
             })
         );
         return;
