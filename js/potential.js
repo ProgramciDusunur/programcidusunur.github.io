@@ -1,5 +1,8 @@
+console.log('[Potential.js] Script loading...');
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('[Potential.js] DOMContentLoaded fired, creating GameManager');
     const manager = new ChessGameManager();
+    console.log('[Potential.js] GameManager instance created');
     let board = null;
     let pvBoard = null;
     let lastPvFen = null; // Track to avoid redundant re-renders

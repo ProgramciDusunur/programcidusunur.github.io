@@ -10,11 +10,14 @@ const CDN_BASE = `https://cdn.jsdelivr.net/gh/${ENGINE_REPO}@${ENGINE_BRANCH}`;
 
 self.onmessage = function(e) {
     if (e.data.type === 'init') {
+        console.log('[Worker] Initialization started');
         const sab = e.data.sab;
         sabView = new Int32Array(sab);
 
+        console.log('[Worker] Fetching potential.js from CDN...');
         // Load the engine JS from jsDelivr CDN
         importScripts(`${CDN_BASE}/potential.js`);
+        console.log('[Worker] potential.js loaded');
 
         // Emscripten Module Setup
         self.Module = {

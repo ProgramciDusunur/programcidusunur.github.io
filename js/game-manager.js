@@ -1,10 +1,15 @@
+console.log('[GameManager] Script loading...');
+console.log('GameManager.js loading...');
 // Singleton GameManager to wrap chess.js and Stockfish Worker
 class ChessGameManager {
     constructor() {
+        console.log('[GameManager] Constructor started');
         if (ChessGameManager.instance) {
+            console.log('[GameManager] Returning existing instance');
             return ChessGameManager.instance;
         }
         
+        console.log('[GameManager] Initializing game state...');
         this.game = new Chess();
         this.engine = null;
         this.isEngineReady = false;
@@ -32,18 +37,15 @@ class ChessGameManager {
             onPVUpdate: null
         };
 
-        // SharedArrayBuffer for STDIN bridge
-        // Guard: SAB requires cross-origin isolation (COEP/COOP headers from SW)
-        // On first visit (before SW activates), SAB is undefined — constructor exits early.
-        // After SW-triggered reload, SAB is available and engine initializes normally.
         if (typeof SharedArrayBuffer === 'undefined') {
-            console.warn('[GameManager] SharedArrayBuffer not available. Waiting for cross-origin isolation...');
+            console.error('[GameManager] SharedArrayBuffer is NOT available. This page is not cross-origin isolated!');
             this.sab = null;
             this.sabView = null;
             ChessGameManager.instance = this;
             return;
         }
 
+        console.log('[GameManager] SharedArrayBuffer is available. Initializing engine...');
         this.sab = new SharedArrayBuffer(4096);
         this.sabView = new Int32Array(this.sab);
         
@@ -52,8 +54,10 @@ class ChessGameManager {
     }
 
     initEngine() {
+        console.log('[GameManager] Initializing Worker: js/engine-worker.js');
         try {
             this.engine = new Worker('js/engine-worker.js');
+            console.log('[GameManager] Worker instance created');
             this.engine.onmessage = (e) => this.handleEngineMessage(e);
             
             // Initialize Worker with SharedArrayBuffer
@@ -61,6 +65,7 @@ class ChessGameManager {
                 type: 'init', 
                 sab: this.sab
             });
+            console.log('[GameManager] Init message sent to worker');
         } catch (e) {
             console.error("Failed to load Local Potential Engine", e);
         }
