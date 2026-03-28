@@ -5,23 +5,23 @@
 const CACHE_NAME = 'potential-site-v3';
 
 const PRECACHE_URLS = [
-    '/',
-    '/index.html',
-    '/potential.html',
-    '/potential-landing.html',
-    '/styles/main.css',
-    '/styles/components.css',
-    '/styles/animations.css',
-    '/styles/potential.css',
-    '/styles/landing.css',
-    '/styles/chessboard-1.0.0.min.css',
-    '/js/main.js',
-    '/js/game-manager.js',
-    '/js/potential.js',
-    '/js/engine-worker.js',
-    '/js/jquery-3.7.0.min.js',
-    '/js/chess-0.10.3.min.js',
-    '/js/chessboard-1.0.0.min.js'
+    './',
+    'index.html',
+    'potential.html',
+    'potential-landing.html',
+    'styles/main.css',
+    'styles/components.css',
+    'styles/animations.css',
+    'styles/potential.css',
+    'styles/landing.css',
+    'styles/chessboard-1.0.0.min.css',
+    'js/main.js',
+    'js/game-manager.js',
+    'js/potential.js',
+    'js/engine-worker.js',
+    'js/jquery-3.7.0.min.js',
+    'js/chess-0.10.3.min.js',
+    'js/chessboard-1.0.0.min.js'
 ];
 
 // -----------------------------------------------------------------------------
