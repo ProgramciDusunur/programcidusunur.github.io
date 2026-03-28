@@ -1,8 +1,8 @@
 // =============================================================================
-// Service Worker — erenaraz.com
-// Handles: Cross-Origin Isolation (COEP/COOP) + Smart Caching
+// Service Worker — erenaraz.com (v4)
+// FIXED: Response consumption race condition
 // =============================================================================
-const CACHE_NAME = 'potential-site-v3';
+const CACHE_NAME = 'potential-site-v4';
 
 const PRECACHE_URLS = [
     './',
@@ -24,24 +24,23 @@ const PRECACHE_URLS = [
     'js/chessboard-1.0.0.min.js'
 ];
 
-// -----------------------------------------------------------------------------
-// Cross-Origin Isolation: Inject COOP/COEP headers
-// Required for SharedArrayBuffer on GitHub Pages (which can't set HTTP headers)
-// Uses 'credentialless' COEP to allow cross-origin resources (Google Fonts, CDN)
-// -----------------------------------------------------------------------------
+// Helper to inject isolation headers
 function withCoiHeaders(response) {
-    if (!response) return response;
+    if (!response || response.status === 0 || response.type === 'opaque') {
+        return response;
+    }
+
     const headers = new Headers(response.headers);
     headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
     headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+
     return new Response(response.body, {
         status: response.status,
         statusText: response.statusText,
-        headers
+        headers: headers
     });
 }
 
-// Install: Pre-cache UI assets
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -50,52 +49,49 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Activate: Clean old caches, claim clients immediately
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then(keys =>
-            Promise.all(
-                keys.filter(key => key !== CACHE_NAME)
-                    .map(key => caches.delete(key))
-            )
+            Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
         ).then(() => self.clients.claim())
     );
 });
 
-// Fetch: COEP injection + smart caching
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
 
-    // 1. Navigation (HTML pages) — Network-first + COEP/COOP headers
+    // Tier 1: Navigation - Network First + COOP/COEP
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request)
                 .then(response => {
-                    const clone = response.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+                    const cacheCopy = response.clone();
+                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, cacheCopy));
                     return withCoiHeaders(response);
                 })
-                .catch(() =>
-                    caches.match(event.request).then(cached => withCoiHeaders(cached))
-                )
+                .catch(() => caches.match(event.request).then(cached => withCoiHeaders(cached)))
         );
         return;
     }
 
-    // 2. Same-origin static assets — Stale-while-revalidate
+    // Tier 2: Same-origin static assets - Stale While Revalidate
     if (url.origin === self.location.origin) {
         event.respondWith(
             caches.match(event.request).then(cached => {
                 const networkFetch = fetch(event.request).then(response => {
-                    caches.open(CACHE_NAME).then(cache => cache.put(event.request, response.clone()));
+                    if (response && response.status === 200) {
+                        const cacheCopy = response.clone();
+                        caches.open(CACHE_NAME).then(cache => cache.put(event.request, cacheCopy));
+                    }
                     return response;
-                });
+                }).catch(() => null);
+
                 return cached || networkFetch;
             })
         );
         return;
     }
 
-    // 3. Cross-origin (CDN, Google Fonts) — Network passthrough
+    // Tier 3: Cross-origin (CDNs, Fonts) - Simple Fetch
     event.respondWith(fetch(event.request));
 });
