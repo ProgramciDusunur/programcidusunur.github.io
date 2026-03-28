@@ -72,47 +72,54 @@ class ChessGameManager {
     }
 
     handleEngineMessage(event) {
-        if (!event.data) return;
-        
-        if (event.data.type === 'stdout') {
-            console.log("[Potential] " + event.data.msg);
-        } else if (event.data.type === 'stderr') {
-            console.error("[Potential ERR] " + event.data.msg);
+        // Debug: Log all raw output from the worker
+        if (event.data.msg) {
+            console.log("[Worker Message] " + event.data.msg);
         }
 
-        if (event.data.type !== 'stdout' && event.data.type !== 'ready') return;
-        const msg = event.data.type === 'ready' ? 'ready' : event.data.msg;
-        
-        if (msg === 'ready') {
+        if (event.data.type === 'ready') {
+            console.log('[GameManager] Received READY from Worker. Sending uci...');
             this.sendToEngine('uci');
-        } else if (msg === 'uciok') {
+            return;
+        } 
+        
+        if (event.data.type !== 'stdout') return;
+        const msg = event.data.msg;
+        
+        if (msg === 'uciok') {
+            console.log('[GameManager] Received uciok. Sending isready...');
             this.isEngineReady = true;
             this.sendToEngine('isready');
             // Standard engine options
             this.sendToEngine(`setoption name Threads value 1`);
             this.sendToEngine(`setoption name Hash value 64`);
+        } else if (msg === 'readyok') {
+            console.log('[GameManager] Received readyok. Engine set up.');
+            this.isEngineReady = true;
+            if (this.isEngineThinking) {
+                this.triggerEngine();
+            }
         } else if (msg.startsWith('bestmove')) {
             const bestMoveStr = msg.split(' ')[1];
-            if (bestMoveStr) {
+            if (bestMoveStr && bestMoveStr !== '(none)') {
                 this.isEngineThinking = false;
                 this.executeEngineMove(bestMoveStr);
             }
-        } else if (msg.startsWith('info depth')) {
+        } else if (msg.startsWith('info')) {
             // Parse evaluation
             const scoreMatch = msg.match(/score cp (-?\d+)/);
             const mateMatch = msg.match(/score mate (-?\d+)/);
+            
             if (scoreMatch) {
                 let evalCp = parseInt(scoreMatch[1], 10) / 100;
-                if (this.game.turn() === 'b') { evalCp = -evalCp; }
+                // Adjust score based on turn
+                if (this.game.turn() === 'b') evalCp = -evalCp;
                 if (this.callbacks.onEvaluation) this.callbacks.onEvaluation({ type: 'cp', value: evalCp });
             } else if (mateMatch) {
                 let mateIn = parseInt(mateMatch[1], 10);
-                // Adjust mate score perspective
                 let side = this.game.turn();
                 let displayMate = side === 'w' ? mateIn : -mateIn;
-                const sign = displayMate > 0 ? '+' : '-';
                 const mateText = `M${Math.abs(displayMate)}`;
-                
                 if (this.callbacks.onEvaluation) this.callbacks.onEvaluation({ type: 'mate', value: mateText, raw: displayMate });
             }
 

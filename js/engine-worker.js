@@ -8,16 +8,24 @@ const ENGINE_REPO = 'ProgramciDusunur/Potential-WASM';
 const ENGINE_BRANCH = 'dist';
 const CDN_BASE = `https://cdn.jsdelivr.net/gh/${ENGINE_REPO}@${ENGINE_BRANCH}`;
 
+self.log = (msg) => self.postMessage({ type: 'stdout', msg: `[Worker] ${msg}` });
+
 self.onmessage = function(e) {
     if (e.data.type === 'init') {
-        console.log('[Worker] Initialization started');
+        self.log('Init message received in worker');
+        
         const sab = e.data.sab;
         sabView = new Int32Array(sab);
 
-        console.log('[Worker] Fetching potential.js from CDN...');
-        // Load the engine JS from jsDelivr CDN
-        importScripts(`${CDN_BASE}/potential.js`);
-        console.log('[Worker] potential.js loaded');
+        self.log(`Fetching potential.js from CDN: ${CDN_BASE}/potential.js`);
+        try {
+            // Load the engine JS from jsDelivr CDN
+            importScripts(`${CDN_BASE}/potential.js`);
+            self.log('potential.js loaded successfully via importScripts');
+        } catch (err) {
+            self.postMessage({ type: 'stderr', msg: `[Worker Error] Failed to importScripts: ${err.message}` });
+            return;
+        }
 
         // Emscripten Module Setup
         self.Module = {
@@ -45,8 +53,15 @@ self.onmessage = function(e) {
         };
 
         // Initialize the Emscripten factory
-        PotentialEngine(self.Module).then(m => {
-            self.postMessage({ type: 'stdout', msg: 'Potential Engine (CDN) Initialized.' });
-        });
+        try {
+            self.log('Calling PotentialEngine factory...');
+            PotentialEngine(self.Module).then(m => {
+                self.log('Potential Engine (CDN) Factory resolved successfully.');
+            }).catch(err => {
+                self.postMessage({ type: 'stderr', msg: `[Worker Error] Factory failed: ${err.message}` });
+            });
+        } catch (err) {
+            self.postMessage({ type: 'stderr', msg: `[Worker Error] Factory call crashed: ${err.message}` });
+        }
     }
 };
