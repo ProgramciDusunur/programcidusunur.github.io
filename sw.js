@@ -62,14 +62,19 @@ self.addEventListener('fetch', (event) => {
 
     // Tier 1: Navigation - Network First + COOP/COEP
     if (event.request.mode === 'navigate') {
+        console.log(`[SW] Intercepting navigation to: ${event.request.url}`);
         event.respondWith(
             fetch(event.request)
                 .then(response => {
                     const cacheCopy = response.clone();
                     caches.open(CACHE_NAME).then(cache => cache.put(event.request, cacheCopy));
+                    console.log(`[SW] Injecting COI headers into: ${event.request.url}`);
                     return withCoiHeaders(response);
                 })
-                .catch(() => caches.match(event.request).then(cached => withCoiHeaders(cached)))
+                .catch(() => caches.match(event.request).then(cached => {
+                    console.log(`[SW] Serving cached + injected: ${event.request.url}`);
+                    return withCoiHeaders(cached);
+                }))
         );
         return;
     }

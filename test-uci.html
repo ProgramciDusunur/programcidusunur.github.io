@@ -10,9 +10,35 @@
         .in { color: #58a6ff; }
         .out { color: #238636; }
         .err { color: #f85149; }
-        input { background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 5px; width: 300px; }
+        input { background: #0d1117; border: solid 1px #30363d; color: #fff; padding: 5px; width: 300px; }
         button { background: #238636; color: #fff; border: none; padding: 5px 15px; cursor: pointer; }
     </style>
+    <script>
+        // Cross-Origin Isolation + Service Worker (MUST BE IN HEAD)
+        (function() {
+            if (!('serviceWorker' in navigator)) return;
+            console.log('[HTML] Checking Isolation... isolated:', window.crossOriginIsolated, 'controller:', !!navigator.serviceWorker.controller);
+
+            if (window.crossOriginIsolated && navigator.serviceWorker.controller) {
+                sessionStorage.removeItem('coiReload');
+                navigator.serviceWorker.register('./sw.js');
+                return;
+            }
+
+            navigator.serviceWorker.register('./sw.js').then(function(reg) {
+                if (reg.installing) {
+                    reg.installing.addEventListener('statechange', function() {
+                        if (this.state === 'activated') window.location.reload();
+                    });
+                } else if (reg.active) {
+                    if (!sessionStorage.getItem('coiReload') || !navigator.serviceWorker.controller) {
+                        sessionStorage.setItem('coiReload', '1');
+                        window.location.reload();
+                    }
+                }
+            });
+        })();
+    </script>
 </head>
 <body>
     <h1>Potential WASM UCI Console</h1>
@@ -23,29 +49,6 @@
     <div id="log"></div>
 
     <script>
-        // Cross-Origin Isolation + Service Worker for Test Console
-        // Required for SharedArrayBuffer / Atomics on GitHub Pages
-        (function() {
-            if (!('serviceWorker' in navigator)) return;
-            if (window.crossOriginIsolated) {
-                sessionStorage.removeItem('coiReload');
-                navigator.serviceWorker.register('./sw.js');
-                return;
-            }
-            navigator.serviceWorker.register('./sw.js').then(function(reg) {
-                if (reg.installing) {
-                    reg.installing.addEventListener('statechange', function() {
-                        if (this.state === 'activated') window.location.reload();
-                    });
-                } else if (reg.active) {
-                    if (!sessionStorage.getItem('coiReload')) {
-                        sessionStorage.setItem('coiReload', '1');
-                        window.location.reload();
-                    }
-                }
-            });
-        })();
-
         const logDiv = document.getElementById('log');
         const cmdInput = document.getElementById('cmd');
 

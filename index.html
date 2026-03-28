@@ -11,6 +11,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="styles/main.css">
+    <script>
+        // Cross-Origin Isolation + Service Worker (MUST BE IN HEAD)
+        (function() {
+            if (!('serviceWorker' in navigator)) return;
+            console.log('[HTML] Checking Isolation... isolated:', window.crossOriginIsolated, 'controller:', !!navigator.serviceWorker.controller);
+
+            if (window.crossOriginIsolated && navigator.serviceWorker.controller) {
+                sessionStorage.removeItem('coiReload');
+                navigator.serviceWorker.register('./sw.js');
+                return;
+            }
+
+            navigator.serviceWorker.register('./sw.js').then(function(reg) {
+                if (reg.installing) {
+                    reg.installing.addEventListener('statechange', function() {
+                        if (this.state === 'activated') window.location.reload();
+                    });
+                } else if (reg.active) {
+                    if (!sessionStorage.getItem('coiReload') || !navigator.serviceWorker.controller) {
+                        sessionStorage.setItem('coiReload', '1');
+                        window.location.reload();
+                    }
+                }
+            });
+        })();
+    </script>
     <link rel="stylesheet" href="styles/components.css">
     <link rel="stylesheet" href="styles/animations.css">
     <link rel="manifest" href="manifest.json">
@@ -207,33 +233,5 @@
     </footer>
 
     <script src="js/main.js"></script>
-    <script>
-        // Cross-Origin Isolation + Service Worker
-        // Enables SharedArrayBuffer for WASM engine on GitHub Pages
-        (function() {
-            if (!('serviceWorker' in navigator)) return;
-
-            if (window.crossOriginIsolated) {
-                // Already isolated — register for updates only
-                sessionStorage.removeItem('coiReload');
-                navigator.serviceWorker.register('./sw.js');
-                return;
-            }
-
-            navigator.serviceWorker.register('./sw.js').then(function(reg) {
-                if (reg.installing) {
-                    reg.installing.addEventListener('statechange', function() {
-                        if (this.state === 'activated') window.location.reload();
-                    });
-                } else if (reg.active) {
-                    // SW active but page not isolated — reload once
-                    if (!sessionStorage.getItem('coiReload')) {
-                        sessionStorage.setItem('coiReload', '1');
-                        window.location.reload();
-                    }
-                }
-            });
-        })();
-    </script>
 </body>
 </html>
