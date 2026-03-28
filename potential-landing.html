@@ -46,13 +46,13 @@
     <div class="bg-gradient"></div>
 
     <!-- Navigation -->
-    <nav style="position: fixed; top: 0; width: 100%; z-index: 100; border-bottom: 1px solid var(--glass-border); background: rgba(10, 10, 12, 0.8); backdrop-filter: var(--glass-blur);">
-        <div class="container" style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <a href="index.html" style="font-family: var(--font-heading); font-weight: 700; color: var(--text-primary); text-decoration: none; font-size: 1.5rem;">eren<span style="color: var(--accent-blue);">araz</span></a>
-            <div style="display: flex; gap: 2rem;">
-                <a href="#features" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">Features</a>
-                <a href="#download" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">Download</a>
-                <a href="potential.html" class="text-gradient" style="font-weight: 600; text-decoration: none; font-size: 0.9rem;">Try Online</a>
+    <nav class="navbar-standard">
+        <div class="container nav-flex">
+            <a href="index.html" class="logo-standard">erenaraz</a>
+            <div class="nav-links-standard">
+                <a href="#features">Features</a>
+                <a href="#download">Download</a>
+                <a href="potential.html" class="nav-btn-highlight">Try Online</a>
             </div>
         </div>
     </nav>
@@ -154,7 +154,7 @@
 
     <!-- Interactive CTA -->
     <section class="container" style="text-align: center;">
-        <div class="glass-panel fade-up" style="background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(157, 80, 187, 0.1)); border: 1px solid rgba(255, 255, 255, 0.2);">
+        <div class="glass-panel fade-up cta-section">
             <h2 style="margin-bottom: 1rem;">Test Potential Online</h2>
             <p style="color: var(--text-secondary); margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
                 Experience the engine's power directly in your browser. Our WebAssembly interface allows you to play against Potential with zero installation.
@@ -187,7 +187,7 @@
     <footer>
         <div class="container footer-grid">
             <div class="footer-col">
-                <h4 style="color: var(--text-primary); font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem;">eren<span style="color: var(--accent-blue);">araz</span></h4>
+                <h4 class="logo-standard-footer">erenaraz</h4>
                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Open-source chess engine development.</p>
             </div>
             <div class="footer-col">

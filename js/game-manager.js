@@ -147,7 +147,6 @@ class ChessGameManager {
 
     startNewGame(timeSeconds = 600, incrementSeconds = 0) {
         this.stopTimer();
-        this.game.reset();
         this.isGameOver = false;
         this.isGameStarted = true;
         this.whiteTime = timeSeconds * 1000;
@@ -155,9 +154,24 @@ class ChessGameManager {
         this.increment = incrementSeconds * 1000;
         this.timeHistory = [];
         
+        // --- Technical Fix for New Game Freeze ---
+        // 1. Explicitly stop current calculation
+        this.sendToEngine('stop');
+        this.isEngineThinking = false;
+
+        // 2. Clear engine state (TT, history)
+        this.sendToEngine('ucinewgame');
+        this.sendToEngine('isready');
+
+        this.game.reset();
         this.notifyUpdate();
         this.startTimer();
-        this.checkEngineTurn();
+        
+        // 3. Small debounce before engine starts thinking in the new game
+        // This stops the main thread from blocking during initialization
+        setTimeout(() => {
+            this.checkEngineTurn();
+        }, 150);
     }
 
     startTimer() {

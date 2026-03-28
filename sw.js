@@ -2,7 +2,7 @@
 // Service Worker — erenaraz.com (v4)
 // FIXED: Response consumption race condition
 // =============================================================================
-const CACHE_NAME = 'potential-site-v7';
+const CACHE_NAME = 'potential-site-v13';
 
 const PRECACHE_URLS = [
     './',

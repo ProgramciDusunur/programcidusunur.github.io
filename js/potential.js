@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let board = null;
     let pvBoard = null;
     let lastPvFen = null; // Track to avoid redundant re-renders
+    let isUserMoveInProgress = false; // Flag to prevent flicker during user moves
 
     // UI Elements
     const evalFill = document.getElementById('eval-fill');
@@ -68,7 +69,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // GameManager Callbacks
     manager.callbacks.onUpdate = (fen, history) => {
-        if (board) board.position(fen, true); // Use true for smooth move animations
+        // If the user just made a move, let chessboard.js finish its animation via onSnapEnd
+        // This prevents the "teleport/flicker" effect where external position() calls conflict with drop animations.
+        if (board && !isUserMoveInProgress) {
+            board.position(fen, true); // Use true for smooth move animations
+        }
         renderHistory(history);
         
         // Hide thinking indicator when move received
@@ -88,27 +93,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Actually, we'll just let onUpdate handle it for now, but update the thinking indicator here.
     };
     manager.callbacks.onEvaluation = (evalObj) => {
-        const cappedCp = evalObj.type === 'cp' ? Math.max(-10, Math.min(10, evalObj.value)) : (evalObj.raw > 0 ? 10 : -10);
-        const heightPercent = 50 + (cappedCp / 10) * 50;
-        evalFill.style.height = `${Math.max(0, Math.min(100, heightPercent))}%`;
+        requestAnimationFrame(() => {
+            const cappedCp = evalObj.type === 'cp' ? Math.max(-10, Math.min(10, evalObj.value)) : (evalObj.raw > 0 ? 10 : -10);
+            const heightPercent = 50 + (cappedCp / 10) * 50;
+            evalFill.style.height = `${Math.max(0, Math.min(100, heightPercent))}%`;
 
-        if (evalObj.type === 'cp') {
-            let cp = evalObj.value;
-            let textScore = cp.toFixed(1);
-            if (cp > 0) textScore = '+' + textScore;
-            evalText.textContent = textScore;
-        } else if (evalObj.type === 'mate') {
-            evalText.textContent = evalObj.value;
-        }
+            if (evalObj.type === 'cp') {
+                let cp = evalObj.value;
+                let textScore = cp.toFixed(1);
+                if (cp > 0) textScore = '+' + textScore;
+                evalText.textContent = textScore;
+            } else if (evalObj.type === 'mate') {
+                evalText.textContent = evalObj.value;
+            }
 
-        // Typographically clean positioning: top for white (+), bottom for black (-)
-        if (cappedCp >= 0) {
-            evalText.classList.remove('at-bottom');
-            evalText.classList.add('at-top');
-        } else {
-            evalText.classList.remove('at-top');
-            evalText.classList.add('at-bottom');
-        }
+            // High-Performance transforms via CSS classes
+            if (cappedCp >= 0) {
+                evalText.classList.remove('at-bottom');
+                evalText.classList.add('at-top');
+            } else {
+                evalText.classList.remove('at-top');
+                evalText.classList.add('at-bottom');
+            }
+        });
     };
 
     manager.callbacks.onTimerTick = (wMs, bMs, turn) => {
@@ -209,18 +216,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function onDrop (source, target) {
+        isUserMoveInProgress = true;
         const result = manager.makeUserMove(source, target);
-        if (result === 'snapback') return 'snapback';
+        
+        if (result === 'snapback') {
+            isUserMoveInProgress = false;
+            return 'snapback';
+        }
         
         // Show thinking indicator if it's engine's turn
         if (thinkingIndicator) thinkingIndicator.classList.remove('hidden');
     }
 
     function onSnapEnd () {
+        isUserMoveInProgress = false;
         board.position(manager.game.fen());
     }
 
+    let lastHistoryLength = 0;
     function renderHistory(history) {
+        if (history.length === lastHistoryLength && history.length > 0) return; // Avoid redundant DOM thrashing
+        lastHistoryLength = history.length;
+
         historyList.innerHTML = '';
         let html = '';
         for (let i = 0; i < history.length; i += 2) {
@@ -230,7 +247,11 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `<span class="history-move">${history[i+1] || ''}</span>`;
         }
         historyList.innerHTML = html;
-        historyList.scrollTop = historyList.scrollHeight;
+        
+        // Scroll only when needed, avoiding global page jumps
+        requestAnimationFrame(() => {
+            historyList.scrollTop = historyList.scrollHeight;
+        });
     }
 
     // Listeners

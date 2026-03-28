@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Potential Chess | Eren Araz</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Base CSS -->
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="styles/components.css">
-    <!-- Chessboard CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/landing.css">
     <link rel="stylesheet" href="styles/chessboard-1.0.0.min.css">
-    <!-- Potential Custom CSS -->
     <link rel="stylesheet" href="styles/potential.css">
     <link rel="manifest" href="manifest.json">
     <script>
@@ -43,14 +43,15 @@
 </head>
 <body class="chess-page">
     <div class="noise-overlay"></div>
-    
-    <!-- Navbar (Reused) -->
-    <nav class="navbar" id="navbar">
-        <div class="container nav-container">
-            <a href="index.html" class="nav-brand">eren<span class="text-accent">araz</span></a>
-            <div class="nav-links">
-                <a href="potential-landing.html" class="nav-link">Engine Info</a>
-                <a href="index.html#projects" class="nav-link">Back to Portfolio</a>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar-standard">
+        <div class="container nav-flex">
+            <a href="index.html" class="logo-standard">erenaraz</a>
+            <div class="nav-links-standard">
+                <a href="potential-landing.html">Engine Info</a>
+                <a href="index.html#projects">Portfolio</a>
             </div>
         </div>
     </nav>

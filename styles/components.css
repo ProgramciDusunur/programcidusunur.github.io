@@ -148,18 +148,6 @@
     padding-top: 72px;
 }
 
-.hero-glow {
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(35, 134, 54, 0.15) 0%, rgba(13, 17, 23, 0) 70%);
-    transform: translate(-50%, -50%);
-    z-index: -1;
-    pointer-events: none;
-}
-
 .hero-content {
     max-width: 800px;
 }
@@ -335,7 +323,6 @@
     background-color: var(--accent-secondary);
     border-radius: 50%;
     margin-right: 12px;
-    box-shadow: 0 0 8px rgba(88, 166, 255, 0.5);
 }
 
 /* Certificate Card specifics */
