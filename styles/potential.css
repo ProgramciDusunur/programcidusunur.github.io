@@ -1,0 +1,368 @@
+/* Potential Chess - Premium Design System */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+    
+    --accent-blue: #00d2ff;
+    --accent-blue-glow: rgba(0, 210, 255, 0.3);
+    --accent-red: #ff4b2b;
+    --accent-red-glow: rgba(255, 75, 43, 0.3);
+    
+    --timer-font: 'JetBrains Mono', 'Roboto Mono', monospace;
+}
+
+/* Page Background Overrides */
+body.chess-page {
+    background: radial-gradient(circle at center, #1a1e26 0%, #0a0c10 100%);
+    min-height: 100vh;
+}
+
+/* Layout Overhaul */
+.potential-main {
+    padding-top: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+}
+
+.chess-container {
+    display: grid;
+    grid-template-columns: 40px minmax(auto, 630px) 350px;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Evaluation Bar - Vertical Thin */
+.eval-column {
+    display: flex;
+    align-items: center;
+}
+
+.eval-bar-wrapper {
+    width: 35px; /* Wider for upright text */
+    height: 600px;
+    background: #111;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+}
+
+.eval-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: #fff;
+    transition: height 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.eval-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-family: var(--timer-font);
+    font-weight: 700;
+    font-size: 0.85rem;
+    z-index: 10;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    mix-blend-mode: difference; /* Perfect contrast on white/black */
+    color: #fff; /* Blend mode handles the rest */
+}
+
+.eval-text.at-top { top: 10px; }
+.eval-text.at-bottom { bottom: 10px; }
+
+/* Board Styling */
+.board-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.board-wrapper {
+    background: var(--glass-bg);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--glass-shadow);
+}
+
+.chessboard {
+    width: 600px; /* Fixed width for stability, let responsive media queries handle smaller screens */
+    max-width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 0 50px rgba(0,0,0,0.5);
+    /* Chessboard.js specific fixes */
+    box-sizing: content-box !important;
+}
+
+.chessboard * {
+    box-sizing: content-box !important;
+}
+
+/* Digital Clocks */
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: var(--glass-bg);
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.clock {
+    font-family: var(--timer-font);
+    font-size: 1.8rem;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 12px;
+    border-radius: 4px;
+    min-width: 120px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.3s ease;
+}
+
+.clock.active {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 15px var(--accent-blue-glow);
+}
+
+.clock.low-time {
+    color: var(--accent-red);
+    border-color: var(--accent-red);
+    animation: clockPulse 1s infinite alternate;
+}
+
+@keyframes clockPulse {
+    from { box-shadow: 0 0 5px var(--accent-red-glow); }
+    to { box-shadow: 0 0 20px var(--accent-red-glow); }
+}
+
+/* Info Panel Cards */
+.panel-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--glass-shadow);
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--accent-blue);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Time Control Selection */
+.time-control-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tc-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.tc-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-blue);
+}
+
+.tc-btn.active {
+    background: var(--accent-blue-glow);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+/* Move History Enhancements */
+.history-list {
+    height: 300px;
+    overflow-y: auto;
+    font-family: var(--timer-font);
+    font-size: 0.9rem;
+    display: grid;
+    grid-template-columns: 30px 1fr 1fr;
+    gap: 5px;
+    align-content: start;
+    padding-right: 10px;
+}
+
+.history-index { color: var(--text-muted); }
+.history-move {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.history-move:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--accent-blue);
+}
+
+/* PV Analysis Panel */
+.pv-analysis-panel {
+    text-align: center;
+}
+
+.pv-board-container {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 12px auto;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+/* Non-interactive overlay */
+.pv-board-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    cursor: default;
+}
+
+#pv-board {
+    width: 150px !important;
+    height: 150px !important;
+}
+
+/* Fix chessboard.js box-sizing inside PV board */
+#pv-board * {
+    box-sizing: content-box !important;
+}
+
+.pv-move-list {
+    font-family: var(--timer-font);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    max-height: 80px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 28px 1fr 1fr;
+    gap: 3px;
+    text-align: left;
+    padding: 0 4px;
+}
+
+.pv-move-num {
+    color: var(--text-muted);
+    font-size: 0.7rem;
+}
+
+.pv-move {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    transition: color 0.2s ease;
+}
+
+/* Animation Utils */
+.thinking-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    margin-left: 10px;
+    animation: thinkingPulse 0.6s infinite alternate;
+}
+
+@keyframes thinkingPulse {
+    from { opacity: 0.3; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1.2); }
+}
+
+/* Utility Classes */
+.hidden {
+    display: none !important;
+}
+
+/* Modal Overlay Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.card {
+    max-width: 400px;
+    width: 90%;
+    padding: 30px;
+    text-align: center;
+    background: #1a1e26;
+    border: 1px solid var(--accent-blue);
+    box-shadow: 0 0 30px var(--accent-blue-glow);
+}
+
+.modal-title {
+    color: var(--accent-blue);
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.modal-desc {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Responsive Fixes */
+@media (max-width: 1000px) {
+    .chess-container {
+        grid-template-columns: 1fr;
+        padding-bottom: 50px;
+    }
+    .eval-column { display: none; }
+    .info-column { width: 100%; }
+}

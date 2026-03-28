@@ -1,0 +1,18 @@
+# Node.js (local dev server)
+node_modules/
+package-lock.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dev/Analysis files
+UI_UX_Analysis_Report.md
+UI_UX_Analyzer_Prompt.md

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potential Chess | Eren Araz</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Base CSS -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <!-- Chessboard CSS -->
+    <link rel="stylesheet" href="styles/chessboard-1.0.0.min.css">
+    <!-- Potential Custom CSS -->
+    <link rel="stylesheet" href="styles/potential.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body class="chess-page">
+    <div class="noise-overlay"></div>
+    
+    <!-- Navbar (Reused) -->
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-brand">eren<span class="text-accent">araz</span>.com</a>
+            <div class="nav-links">
+                <a href="potential-landing.html" class="nav-link">Engine Info</a>
+                <a href="index.html#projects" class="nav-link">Back to Portfolio</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="potential-main">
+        <div class="container chess-container">
+            
+            <!-- Left: Evaluation Bar (Vertical Thin) -->
+            <div class="eval-column">
+                <div class="eval-bar-wrapper">
+                    <div id="eval-fill" class="eval-fill"></div>
+                    <div class="eval-text" id="eval-text">0.0</div>
+                </div>
+            </div>
+
+            <!-- Middle: Board & Clocks -->
+            <div class="board-column">
+                <div class="player-info" id="opponent-info-container">
+                    <div class="player-meta">
+                        <span class="player-name">Potential</span>
+                        <span id="engine-thinking" class="thinking-indicator hidden"></span>
+                    </div>
+                    <div class="clock" id="black-clock">10:00</div>
+                </div>
+
+                <div class="board-wrapper">
+                    <div id="board" class="chessboard"></div>
+                </div>
+
+                <div class="player-info" id="player-info-container">
+                    <div class="player-meta">
+                        <span class="player-name">Player (White)</span>
+                    </div>
+                    <div class="clock active" id="white-clock">10:00</div>
+                </div>
+            </div>
+
+            <!-- Right: Info Panel (Match Management) -->
+            <div class="info-column">
+                <!-- Time Controls -->
+                <div class="panel-card settings-panel">
+                    <h3 class="panel-title">Time Control</h3>
+                    <div class="time-control-grid">
+                        <button class="tc-btn" data-time="1" data-inc="0">1 | 0</button>
+                        <button class="tc-btn" data-time="3" data-inc="0">3 | 0</button>
+                        <button class="tc-btn active" data-time="3" data-inc="2">3 | 2</button>
+                        <button class="tc-btn" data-time="5" data-inc="0">5 | 0</button>
+                        <button class="tc-btn" data-time="5" data-inc="3">5 | 3</button>
+                        <button class="tc-btn" data-time="10" data-inc="5">10 | 5</button>
+                    </div>
+                    
+                    
+                    <button id="btn-new-game" class="btn btn-primary w-full mt-4">New Game</button>
+                    <button id="btn-undo" class="btn btn-secondary w-full mt-2">Undo Move</button>
+                </div>
+
+                <!-- PV Analysis -->
+                <div class="panel-card pv-analysis-panel">
+                    <h3 class="panel-title">Engine Line</h3>
+                    <div class="pv-board-container">
+                        <div id="pv-board"></div>
+                    </div>
+                    <div class="pv-move-list" id="pv-move-list"></div>
+                </div>
+
+                <!-- Move History -->
+                <div class="panel-card history-panel">
+                    <h3 class="panel-title">History</h3>
+                    <div class="history-list" id="move-history">
+                        <!-- Moves appended here -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Game Status Modal -->
+    <div id="status-modal" class="modal-overlay hidden">
+        <div class="modal card">
+            <h2 id="modal-title" class="modal-title">Game Over</h2>
+            <p id="modal-desc" class="modal-desc">Time Out! Black wins.</p>
+            <div class="modal-actions">
+                <button id="btn-modal-new-game" class="btn btn-primary">Rematch</button>
+                <button id="btn-modal-close" class="btn btn-secondary">Summary</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/jquery-3.7.0.min.js" defer></script>
+    <script src="js/chess-0.10.3.min.js" defer></script>
+    <script src="js/chessboard-1.0.0.min.js" defer></script>
+    
+    <script src="js/game-manager.js" defer></script>
+    <script src="js/potential.js" defer></script>
+    <script>
+        // Cross-Origin Isolation + Service Worker
+        (function() {
+            if (!('serviceWorker' in navigator)) return;
+
+            if (window.crossOriginIsolated) {
+                sessionStorage.removeItem('coiReload');
+                navigator.serviceWorker.register('/sw.js');
+                return;
+            }
+
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                if (reg.installing) {
+                    reg.installing.addEventListener('statechange', function() {
+                        if (this.state === 'activated') window.location.reload();
+                    });
+                } else if (reg.active) {
+                    if (!sessionStorage.getItem('coiReload')) {
+                        sessionStorage.setItem('coiReload', '1');
+                        window.location.reload();
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

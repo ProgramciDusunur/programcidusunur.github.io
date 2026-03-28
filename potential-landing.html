@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POTENTIAL | State-of-the-Art UCI Chess Engine</title>
+    <meta name="description" content="Potential is a powerful, open-source UCI Chess Engine optimized for modern architectures, featuring hand-tuned evaluation and AVX2 optimized search.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles/landing.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <div class="noise-overlay"></div>
+    <div class="bg-gradient"></div>
+
+    <!-- Navigation -->
+    <nav style="position: fixed; top: 0; width: 100%; z-index: 100; border-bottom: 1px solid var(--glass-border); background: rgba(10, 10, 12, 0.8); backdrop-filter: var(--glass-blur);">
+        <div class="container" style="padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <a href="index.html" style="font-family: var(--font-heading); font-weight: 700; color: var(--text-primary); text-decoration: none; font-size: 1.5rem;">POTENTIAL</a>
+            <div style="display: flex; gap: 2rem;">
+                <a href="#features" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">Features</a>
+                <a href="#download" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">Download</a>
+                <a href="potential.html" class="text-gradient" style="font-weight: 600; text-decoration: none; font-size: 0.9rem;">Try Online</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero ripple-effect">
+        <div class="hero-content">
+            <h1 class="hero-title fade-up">POTENTIAL</h1>
+            <p class="hero-tagline fade-up" style="transition-delay: 100ms;">
+                Powerful, Open-Source UCI Chess Engine optimized for modern architectures.
+            </p>
+            <div class="hero-actions fade-up" style="transition-delay: 200ms;">
+                <a href="potential.html" class="btn btn-primary">Try Online</a>
+                <a href="https://github.com/ProgramciDusunur/Potential" class="btn btn-secondary">View on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technical Excellence Section -->
+    <section id="features" class="container">
+        <h2 class="section-title fade-up">Technical Excellence</h2>
+        <p class="section-subtitle fade-up" style="transition-delay: 100ms;">Built from the ground up for speed, accuracy, and scalability.</p>
+        
+        <div class="grid grid-4">
+            <div class="glass-panel feature-card fade-up" style="transition-delay: 200ms;">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <h3>Advanced Search</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Core techniques include PVS, Iterative Deepening, Transposition Tables, and aggressive pruning (LMR, NMP, Futility).</p>
+            </div>
+            <div class="glass-panel feature-card fade-up" style="transition-delay: 300ms;">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <h3>Engine Strength</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Validated via CCRL 40/15 and Blitz rating lists, demonstrating competitive performance against established engines.</p>
+            </div>
+            <div class="glass-panel feature-card fade-up" style="transition-delay: 400ms;">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                <h3>Modern Architecture</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Written in C with a high-performance bitboard core, optimized for SSE/AVX2 SIMD instructions and WebAssembly.</p>
+            </div>
+            <div class="glass-panel feature-card fade-up" style="transition-delay: 500ms;">
+                <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                <h3>UCI Compatibility</h3>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Full support for the Universal Chess Interface protocol, compatible with all major GUIs like Arena and CuteChess.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Distribution & Downloads Section -->
+    <section id="download" class="container" style="background: rgba(255, 255, 255, 0.02); border-radius: 32px; padding: 6rem 1.5rem;">
+        <h2 class="section-title fade-up">Distribution & Downloads</h2>
+        <div class="tabs fade-up" style="transition-delay: 100ms;">
+            <button class="tab-btn active" onclick="showPlatform('windows')">Windows</button>
+            <button class="tab-btn" onclick="showPlatform('linux')">Linux</button>
+            <button class="tab-btn" onclick="showPlatform('mac')">macOS</button>
+        </div>
+
+        <div id="platform-content" class="fade-up" style="transition-delay: 200ms;">
+            <div id="windows" class="glass-panel" style="text-align: center;">
+                <h3 style="margin-bottom: 1rem;">Potential v1.0 (Windows AVX2)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Optimized build for modern 64-bit Windows environments.</p>
+                <a href="#" class="btn btn-primary">Download .exe</a>
+            </div>
+            <div id="linux" class="glass-panel" style="display: none; text-align: center;">
+                <h3 style="margin-bottom: 1rem;">Potential v1.0 (Linux x64)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Generic x64 build for all major Linux distributions.</p>
+                <a href="#" class="btn btn-primary">Download Binary</a>
+            </div>
+            <div id="mac" class="glass-panel" style="display: none; text-align: center;">
+                <h3 style="margin-bottom: 1rem;">Potential v1.0 (macOS Universal)</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">Native build for both Apple Silicon and Intel-based Macs.</p>
+                <a href="#" class="btn btn-primary">Download .dmg</a>
+            </div>
+        </div>
+
+        <div style="margin-top: 4rem;">
+            <h3 class="fade-up" style="margin-bottom: 1.5rem; text-align: center;">Build From Source</h3>
+            <div class="terminal fade-up" style="transition-delay: 100ms;">
+                <div class="terminal-header">
+                    <div class="dot red"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <code>
+                    $ git clone https://github.com/ProgramciDusunur/Potential.git<br>
+                    $ cd Potential/src<br>
+                    $ make -j8<br>
+                    $ ./Potential
+                </code>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive CTA -->
+    <section class="container" style="text-align: center;">
+        <div class="glass-panel fade-up" style="background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), rgba(157, 80, 187, 0.1)); border: 1px solid rgba(255, 255, 255, 0.2);">
+            <h2 style="margin-bottom: 1rem;">Test Potential Online</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+                Experience the engine's power directly in your browser. Our WebAssembly interface allows you to play against Potential v1.0 with zero installation.
+            </p>
+            <a href="potential.html" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Launch Web Interface</a>
+        </div>
+    </section>
+
+    <!-- Community & Credits -->
+    <section class="container">
+        <h2 class="section-title fade-up">Community & Credits</h2>
+        <div class="grid grid-2">
+            <div class="glass-panel fade-up" style="transition-delay: 100ms;">
+                <h4 style="color: var(--accent-blue); margin-bottom: 0.5rem;">Engine Credits</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 1rem;">
+                    Heartfelt thanks to <strong>Ciekce, rwbc, Dark Neutrino, Zuppa, Shawn, Dan,</strong> and <strong>Swedishchef</strong> for their invaluable contributions and insights.
+                </p>
+            </div>
+            <div class="glass-panel fade-up" style="transition-delay: 200ms;">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.5rem;">Join Development</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Potential is open-source and welcomes contributions. Join the community to discuss engine architecture.</p>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="https://github.com/ProgramciDusunur/Potential/discussions" class="btn btn-secondary">Discussions</a>
+                    <a href="https://github.com/ProgramciDusunur/Potential" class="btn btn-secondary">Documentation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h4 style="color: var(--text-primary); font-family: var(--font-heading); font-size: 1.2rem; margin-bottom: 1rem;">POTENTIAL</h4>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">Building the future of open-source chess engines.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="http://wbec-ridderkerk.nl/html/UCIProtocol.html">UCI Protocol</a></li>
+                    <li><a href="#">Benchmark Results</a></li>
+                    <li><a href="#">Engine Testing</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Project</h4>
+                <ul>
+                    <li><a href="#">Roadmap</a></li>
+                    <li><a href="#">Release Notes</a></li>
+                    <li><a href="#">Contributors</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Community</h4>
+                <ul>
+                    <li><a href="https://github.com/ProgramciDusunur/Potential">GitHub</a></li>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Stockfish Forums</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container" style="padding-top: 2rem; border-top: 1px solid var(--glass-border); margin-top: 2rem; text-align: center; color: var(--text-secondary); font-size: 0.8rem;">
+            &copy; 2026 Eren Araz. Potential Chess is licensed under GPLv3.
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Platform Switcher
+        function showPlatform(platformId) {
+            const platforms = ['windows', 'linux', 'mac'];
+            platforms.forEach(p => {
+                document.getElementById(p).style.display = (p === platformId) ? 'block' : 'none';
+            });
+            
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.innerText.toLowerCase().includes(platformId)) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+
+        // Scroll Reveal
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+        // Cross-Origin Isolation + Service Worker
+        (function() {
+            if (!('serviceWorker' in navigator)) return;
+
+            if (window.crossOriginIsolated) {
+                sessionStorage.removeItem('coiReload');
+                navigator.serviceWorker.register('/sw.js');
+                return;
+            }
+
+            navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                if (reg.installing) {
+                    reg.installing.addEventListener('statechange', function() {
+                        if (this.state === 'activated') window.location.reload();
+                    });
+                } else if (reg.active) {
+                    if (!sessionStorage.getItem('coiReload')) {
+                        sessionStorage.setItem('coiReload', '1');
+                        window.location.reload();
+                    }
+                }
+            });
+        })();
+    </script>
+</body>
+</html>

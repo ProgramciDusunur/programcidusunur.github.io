@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Potential Engine UCI Test</title>
+    <style>
+        body { background: #0d1117; color: #c9d1d9; font-family: monospace; padding: 20px; }
+        #log { background: #161b22; border: 1px solid #30363d; padding: 10px; height: 400px; overflow-y: auto; margin-top: 10px; }
+        .in { color: #58a6ff; }
+        .out { color: #238636; }
+        .err { color: #f85149; }
+        input { background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 5px; width: 300px; }
+        button { background: #238636; color: #fff; border: none; padding: 5px 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Potential WASM UCI Console</h1>
+    <div>
+        <input type="text" id="cmd" placeholder="Enter UCI command (e.g., uci)">
+        <button onclick="send()">Send</button>
+    </div>
+    <div id="log"></div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const cmdInput = document.getElementById('cmd');
+
+        function log(msg, type) {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${type === 'in' ? '> ' : '< '} ${msg}`;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        // --- CI/CD Integration (jsDelivr CDN) ---
+        const REPO = 'ProgramciDusunur/Potential-WASM';
+        
+        async function getEngineConfig() {
+            // Professional Deployment: Fetching GitHub dist branch directly via CORS-safe CDN.
+            const jsUrl = `https://cdn.jsdelivr.net/gh/${REPO}@dist/potential.js`;
+            const wasmUrl = `https://cdn.jsdelivr.net/gh/${REPO}@dist/potential.wasm`;
+            
+            try {
+                log('Fetching the latest engine version via CDN...', 'out');
+                // Check if CDN is alive (optional but good for fallback)
+                const res = await fetch(jsUrl, { method: 'HEAD' });
+                if (!res.ok) throw new Error('CDN not ready');
+
+                return {
+                    jsUrl: jsUrl,
+                    wasmUrl: wasmUrl,
+                    version: 'Automatic (Latest Dist)',
+                    source: 'jsDelivr CDN'
+                };
+            } catch (err) {
+                log('CDN not ready or unreachable. Loading local engine.', 'err');
+            }
+            
+            return {
+                jsUrl: window.location.origin + '/engine/potential.js',
+                wasmUrl: window.location.origin + '/engine/potential.wasm',
+                version: 'local',
+                source: 'Local Fallback'
+            };
+        }
+
+        // 1. Create a Worker that handles the Stdin/Stdout bridge
+        const workerCode = `
+            let sabView;
+            
+            self.onmessage = function(e) {
+                if (e.data.type === 'init') {
+                    const { sab, jsUrl, wasmUrl } = e.data;
+                    sabView = new Int32Array(sab);
+                    
+                    // Load the engine script from remote/local URL
+                    importScripts(jsUrl);
+                    
+                    // Emscripten Module Setup
+                    self.Module = {
+                        locateFile: (path) => {
+                            if (path.endsWith('.wasm')) return wasmUrl;
+                            return path;
+                        },
+                        print: (text) => self.postMessage({ type: 'stdout', msg: text }),
+                        printErr: (text) => self.postMessage({ type: 'stderr', msg: text }),
+                        onRuntimeInitialized: () => self.postMessage({ type: 'ready' }),
+                        stdin: () => {
+                            let r = Atomics.load(sabView, 1);
+                            let w = Atomics.load(sabView, 0);
+                            while (r >= w) {
+                                Atomics.wait(sabView, 0, w);
+                                w = Atomics.load(sabView, 0);
+                            }
+                            let char = sabView[2 + (r % 1000)];
+                            Atomics.store(sabView, 1, r + 1);
+                            return char;
+                        }
+                    };
+                    
+                    PotentialEngine(self.Module).then(m => {
+                        console.log("Potential WASM initialized inside worker.");
+                    });
+                }
+            };
+        `;
+
+        const blob = new Blob([workerCode], {type: 'application/javascript'});
+        const workerUrl = URL.createObjectURL(blob);
+        const worker = new Worker(workerUrl);
+
+        // 2. Setup SharedArrayBuffer for STDIN
+        const sab = (typeof SharedArrayBuffer !== 'undefined') 
+            ? new SharedArrayBuffer(4096) 
+            : new Uint8Array(4096).buffer; // Fallback (though won't work for bridge)
+        const sabView = new Int32Array(sab);
+
+        worker.onmessage = (e) => {
+            if (e.data.type === 'stdout') log(e.data.msg, 'out');
+            if (e.data.type === 'stderr') log('ERROR: ' + e.data.msg, 'err');
+            if (e.data.type === 'ready') log('Engine Ready!', 'out');
+        };
+
+        // Initialize engine after fetching config
+        getEngineConfig().then(config => {
+            log(`Loading Engine (${config.version}) from ${config.source}...`, 'out');
+            worker.postMessage({ 
+                type: 'init', 
+                sab: sab, 
+                jsUrl: config.jsUrl, 
+                wasmUrl: config.wasmUrl 
+            });
+        });
+
+        function send() {
+            const cmd = cmdInput.value;
+            if (!cmd) return;
+            log(cmd, 'in');
+            
+            let w = Atomics.load(sabView, 0);
+            const fullCmd = cmd + '\n';
+            for (let i = 0; i < fullCmd.length; i++) {
+                sabView[2 + (w % 1000)] = fullCmd.charCodeAt(i);
+                w++;
+            }
+            Atomics.store(sabView, 0, w);
+            Atomics.notify(sabView, 0, 1);
+            
+            cmdInput.value = '';
+        }
+
+        cmdInput.onkeydown = (e) => { if (e.key === 'Enter') send(); };
+    </script>
+</body>
+</html>
