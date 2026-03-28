@@ -2,7 +2,7 @@
 // Service Worker — erenaraz.com (v4)
 // FIXED: Response consumption race condition
 // =============================================================================
-const CACHE_NAME = 'potential-site-v5';
+const CACHE_NAME = 'potential-site-v6';
 
 const PRECACHE_URLS = [
     './',
@@ -31,8 +31,9 @@ function withCoiHeaders(response) {
     }
 
     const headers = new Headers(response.headers);
-    headers.set('Cross-Origin-Embedder-Policy', 'credentialless');
+    headers.set('Cross-Origin-Embedder-Policy', 'credentialless'); 
     headers.set('Cross-Origin-Opener-Policy', 'same-origin');
+    headers.set('Cross-Origin-Resource-Policy', 'cross-origin'); // Critical for COEP compliance
 
     return new Response(response.body, {
         status: response.status,

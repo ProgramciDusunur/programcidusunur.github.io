@@ -53,11 +53,17 @@ class ChessGameManager {
         ChessGameManager.instance = this;
     }
 
-    initEngine() {
-        console.log('[GameManager] Initializing Worker: js/engine-worker.js');
+    async initEngine() {
+        console.log('[GameManager] Initializing Worker via Blob for isolation inheritance...');
         try {
-            this.engine = new Worker('js/engine-worker.js');
-            console.log('[GameManager] Worker instance created');
+            // Loading worker as a Blob is more reliable for COEP/COOP inheritance
+            const response = await fetch('js/engine-worker.js');
+            const code = await response.text();
+            const blob = new Blob([code], { type: 'application/javascript' });
+            const workerUrl = URL.createObjectURL(blob);
+            
+            this.engine = new Worker(workerUrl);
+            console.log('[GameManager] Blob Worker instance created');
             this.engine.onmessage = (e) => this.handleEngineMessage(e);
             
             // Initialize Worker with SharedArrayBuffer
@@ -67,7 +73,7 @@ class ChessGameManager {
             });
             console.log('[GameManager] Init message sent to worker');
         } catch (e) {
-            console.error("Failed to load Local Potential Engine", e);
+            console.error("[GameManager Error] Failed to load Engine Worker:", e);
         }
     }
 
