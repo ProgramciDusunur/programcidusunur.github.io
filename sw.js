@@ -100,5 +100,8 @@ self.addEventListener('fetch', (event) => {
     }
 
     // Tier 3: Cross-origin (CDNs, Fonts) - Simple Fetch
-    event.respondWith(fetch(event.request));
+    // By NOT calling event.respondWith, we let the browser handle it natively.
+    // This is required so the browser can see the original CORP headers (e.g. from jsDelivr).
+    // If we use fetch() here for no-cors requests, the opaque response hides CORP headers and fails COEP.
+    return;
 });
